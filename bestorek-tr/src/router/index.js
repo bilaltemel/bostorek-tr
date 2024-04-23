@@ -19,7 +19,7 @@ const router = createRouter({
             component: BooksView
         },
         {
-            path: "/contact",
+            path: "/contact-us",
             name: "contact",
             component: ContactView
         },
