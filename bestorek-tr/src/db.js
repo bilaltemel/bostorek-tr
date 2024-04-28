@@ -6,7 +6,7 @@ const books = [
     page: 320,
     description:
       "A thrilling mystery that keeps readers on the edge of their seats.",
-    rating: 8.5,
+    rating: 3.4,
     uploadDate: "19 Jan 2021",
   },
   {

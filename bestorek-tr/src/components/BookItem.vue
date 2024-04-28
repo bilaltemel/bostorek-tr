@@ -20,12 +20,13 @@
           style="background-color: #063547"
           class="py-1 px-2 text-white badge mb-0"
         >
-          {{ book.uploadDate}}
+          {{ book.uploadDate }}
         </p>
       </div>
     </div>
     <span
-      class="position-absolute top-0 start-100 translate-middle p-2 bg-info text-light rounded-circle border border-2 border-light"
+      :class="ratingBadgeClass"
+      class="position-absolute top-0 start-100 translate-middle p-2 text-light rounded-circle border border-2 border-light"
     >
       {{ book.rating }}
     </span>
@@ -39,6 +40,17 @@ export default {
     book: {
       type: Object,
       default: () => ({}),
+    },
+  },
+  computed: {
+    ratingBadgeClass() {
+      if (this.book.rating > 7) {
+        return "bg-success";
+      } else if (this.book.rating > 4) {
+        return "bg-warning";
+      } else {
+        return "bg-danger";
+      }
     },
   },
 };
