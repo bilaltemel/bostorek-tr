@@ -18,7 +18,7 @@ const books = [
       "An epic science fiction adventure exploring distant galaxies and new civilizations.",
     rating: 9.2,
     uploadDate: "19 Jan 2021",
-  },
+  },  
   {
     id: 3,
     name: "Serendipity's Secret",

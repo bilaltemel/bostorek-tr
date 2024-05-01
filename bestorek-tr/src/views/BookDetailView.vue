@@ -1,31 +1,26 @@
 <template>
   <section>
     <div class="container">
-      <SectionHeader
-        title="Book Detail"
-        text="We declare long prop names using camelCase because this avoids"
+      <SectionHeader :title="book.name" :text="book.author" />
+      <font-awesome-icon
+        :icon="['fas', 'arrow-left']"
+        size="2xl"
+        class="mb-2"
+        style="cursor: pointer; color: #063547"
+        @click="goToBackBooks"
       />
-      <button>Back</button>
       <div class="row mb-4">
         <div class="col-lg-6">
           <img class="card-img-top" src="../../template/images/b_detail.jpg" />
         </div>
         <div class="col-lg-6 details-wrapper">
           <p class="lead description">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos
-            incidunt repellat, eligendi repudiandae excepturi odio officia aut
-            non ullam cum. Lorem ipsum dolor sit amet consectetur adipisicing
-            elit. Eos incidunt repellat, eligendi repudiandae excepturi odio
-            officia aut non ullam cum. Lorem ipsum dolor sit amet consectetur
-            adipisicing elit. Eos incidunt repellat, eligendi repudiandae
-            excepturi odio officia aut non ullam cum. Lorem ipsum dolor sit amet
-            consectetur adipisicing elit. Eos incidunt repellat, eligendi
-            repudiandae excepturi odio officia aut non ullam cum.
+            {{ book.description }}
           </p>
           <div class="mb-4">
             <div class="row border-bottom pb-2">
               <div class="col-lg-6"><strong>Page</strong></div>
-              <div class="col-lg-6">280</div>
+              <div class="col-lg-6">{{ book.page }}</div>
             </div>
             <div class="row border-bottom pb-2">
               <div class="col-lg-6"><strong>Category</strong></div>
@@ -33,11 +28,11 @@
             </div>
             <div class="row border-bottom pb-2">
               <div class="col-lg-6"><strong>Rating</strong></div>
-              <div class="col-lg-6">7.4</div>
+              <div class="col-lg-6">{{ book.rating }}</div>
             </div>
             <div class="row border-bottom pb-2">
               <div class="col-lg-6"><strong>Upload Date</strong></div>
-              <div class="col-lg-6">03 Mar 2002</div>
+              <div class="col-lg-6">{{ book.uploadDate }}</div>
             </div>
           </div>
           <div class="comments-section">
@@ -51,8 +46,8 @@
                 <div class="d-flex justify-content-between">
                   <p class="fw-bold fst-italic">John Doe</p>
                   <div class="d-flex align-items-center">
-                    <p>Upvote</p>
-                    <p class="ps-2"><strong>8</strong></p>
+                    <font-awesome-icon :icon="['far', 'thumbs-up']" />
+                    <p class="ps-2 mb-0"><strong>8</strong></p>
                   </div>
                 </div>
               </div>
@@ -66,8 +61,8 @@
                 <div class="d-flex justify-content-between">
                   <p class="fw-bold fst-italic">John Doe</p>
                   <div class="d-flex align-items-center">
-                    <p>Upvote</p>
-                    <p class="ps-2"><strong>8</strong></p>
+                    <font-awesome-icon :icon="['far', 'thumbs-up']" />
+                    <p class="ps-2 mb-0"><strong>8</strong></p>
                   </div>
                 </div>
               </div>
@@ -81,8 +76,8 @@
                 <div class="d-flex justify-content-between">
                   <p class="fw-bold fst-italic">John Doe</p>
                   <div class="d-flex align-items-center">
-                    <p>Upvote</p>
-                    <p class="ps-2"><strong>8</strong></p>
+                    <font-awesome-icon :icon="['far', 'thumbs-up']" />
+                    <p class="ps-2 mb-0"><strong>8</strong></p>
                   </div>
                 </div>
               </div>
@@ -96,8 +91,8 @@
                 <div class="d-flex justify-content-between">
                   <p class="fw-bold fst-italic">John Doe</p>
                   <div class="d-flex align-items-center">
-                    <p>Upvote</p>
-                    <p class="ps-2"><strong>8</strong></p>
+                    <font-awesome-icon :icon="['far', 'thumbs-up']" />
+                    <p class="ps-2 mb-0"><strong>8</strong></p>
                   </div>
                 </div>
               </div>
@@ -111,8 +106,8 @@
                 <div class="d-flex justify-content-between">
                   <p class="fw-bold fst-italic">John Doe</p>
                   <div class="d-flex align-items-center">
-                    <p>Upvote</p>
-                    <p class="ps-2"><strong>8</strong></p>
+                    <font-awesome-icon :icon="['far', 'thumbs-up']" />
+                    <p class="ps-2 mb-0"><strong>8</strong></p>
                   </div>
                 </div>
               </div>
@@ -125,11 +120,28 @@
 </template>
 
 <script>
-import SectionHeader from "../components/SectionHeader.vue";
+import SectionHeader from "@/components/SectionHeader.vue";
+import books from "@/db.js";
 export default {
   name: "BookDetailView",
   components: {
     SectionHeader,
+  },
+  data() {
+    return {
+      book: null,
+    };
+  },
+  created() {
+    const bookId = this.$route.params.id;
+    this.book = books.find((book) => book.id === parseInt(bookId));
+    // console.log("this.book :>> ", this.book);
+  },
+  methods: {
+    goToBackBooks() {
+      this.$router.push({ name: "books" });
+      // console.log('this.$router :>> ', this.$router);
+    },
   },
 };
 </script>
