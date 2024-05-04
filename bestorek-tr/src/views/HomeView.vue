@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="full-section-height">
         HomeView Page
     </div>
 </template>

@@ -6,7 +6,7 @@
         :icon="['fas', 'arrow-left']"
         size="2xl"
         class="mb-2"
-        style="cursor: pointer; color: #063547"
+        style="cursor: pointer; color: var(--primary-color)"
         @click="goToBackBooks"
       />
       <div class="row mb-4">
