@@ -4,6 +4,8 @@ import connectDB from "./config/db.js";
 const app = express();
 const port = 3000;
 
+app.use(express.json());
+
 app.use("/api/v1/books", bookRoute);
 
 try {
@@ -13,5 +15,5 @@ try {
     console.log(`Server is listening port: ${port}`);
   });
 } catch (error) {
-    process.exit(1);
+  process.exit(1);
 }
