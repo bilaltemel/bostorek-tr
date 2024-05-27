@@ -4,7 +4,7 @@ import { isValidObjectId, findDocumentById } from "../utils/index.js";
 const getAllBooks = async (req, res) => {
   try {
     const books = await Book.find();
-    res.status(200).json({ books });
+    res.status(200).json(books);
   } catch (error) {
     console.error("Error at getAllBooks", error);
     return res.status(500).json({ error: "Internal Server Error" });

@@ -1,8 +1,8 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./assets/styles.css";
+import "@/assets/styles.css";
 import { createApp } from "vue";
-import App from "./App.vue";
-import router from "@/router/index";
+import App from "@/App.vue";
+import router from "@/router/index.js";
 
 /* import the fontawesome core */
 import { library } from "@fortawesome/fontawesome-svg-core";

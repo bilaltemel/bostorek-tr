@@ -10,7 +10,8 @@
           {{ book.author }}
         </span>
       </div>
-      <h5 class="card-title mt-3 fw-semibold">{{ book.name }}</h5>
+      <!-- {{ book }} -->
+      <h5 class="card-title mt-3 fw-semibold">{{ book.title }}</h5>
       <p class="card-text">
         {{ truncatedText }}
       </p>
@@ -20,7 +21,7 @@
           style="background-color: var(--primary-color)"
           class="py-1 px-2 text-white badge mb-0"
         >
-          {{ book.uploadDate }}
+          {{ book.updatedAt }}
         </p>
       </div>
     </div>

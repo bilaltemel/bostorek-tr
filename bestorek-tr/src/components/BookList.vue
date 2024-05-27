@@ -5,7 +5,7 @@
       v-for="book in books"
       :key="book.id"
     >
-      <RouterLink :to="'/books/' + book.id">
+      <RouterLink :to="'/books/' + book._id">
         <BookItem :book="book" />
       </RouterLink>
     </div>
@@ -14,10 +14,13 @@
 
 <script>
 import BookItem from "@/components/BookItem.vue";
+import { RouterLink } from "vue-router";
+
 export default {
   name: "BookList",
   components: {
     BookItem,
+    RouterLink,
   },
   props: {
     books: {

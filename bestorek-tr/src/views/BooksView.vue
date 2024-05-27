@@ -6,7 +6,11 @@
         text="We declare long prop names using camelCase because this avoids"
       />
       <BookList :books="paginatedBooks" />
-      <Pagination :currentPage="currentPage" :totalPages="totalPages" @page-changed="updatePage" />
+      <Pagination
+        :currentPage="currentPage"
+        :totalPages="totalPages"
+        @page-changed="updatePage"
+      />
     </div>
   </section>
 </template>
@@ -15,7 +19,6 @@
 import SectionHeader from "@/components/SectionHeader.vue";
 import BookList from "@/components/BookList.vue";
 import Pagination from "@/components/Pagination.vue";
-import books from "@/db.js";
 export default {
   name: "BooksView",
   components: {
@@ -25,7 +28,7 @@ export default {
   },
   data() {
     return {
-      books: books,
+      books: [],
       currentPage: 1,
       itemsPerPage: 8,
     };
@@ -35,6 +38,7 @@ export default {
       return Math.ceil(this.books.length / this.itemsPerPage);
     },
     paginatedBooks() {
+      // console.log("books:", this.books);
       const startIndex = (this.currentPage - 1) * this.itemsPerPage; // current Page bulunduğu sayfa
       const endIndex = startIndex + this.itemsPerPage;
       return this.books.slice(startIndex, endIndex);
@@ -42,8 +46,18 @@ export default {
   },
   methods: {
     updatePage(page) {
-      this.currentPage = page
-    }
+      this.currentPage = page;
+    },
+    async fetchBooks() {
+      try {
+        const response = await fetch("http://localhost:3000/api/v1/books");
+        const data = await response.json();
+        this.books = data;
+      } catch (error) {}
+    },
+  },
+  created() {
+    this.fetchBooks();
   }
 };
 </script>
