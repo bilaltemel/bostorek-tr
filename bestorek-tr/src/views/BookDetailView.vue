@@ -124,6 +124,8 @@
 
 <script>
 import SectionHeader from "@/components/SectionHeader.vue";
+import { useBookStore } from "@/stores/bookStore.js";
+import { mapState } from "pinia";
 export default {
   name: "BookDetailView",
   components: {
@@ -136,23 +138,31 @@ export default {
     };
   },
   created() {
-    this.fetchABook();
+    this.selectBook();
   },
   methods: {
     goToBackBooks() {
       this.$router.push({ name: "books" });
     },
-    async fetchABook() {
+    selectBook() {
       const bookId = this.$route.params.id;
-      try {
-        const response = await fetch(
-          `http://localhost:3000/api/v1/books/${bookId}`
-        );
-        const data = await response.json();
-        this.book = data;
-        this.loading = false
-      } catch (error) {}
+      this.book = this.selectedBook(bookId);
+      this.loading = false;
     },
+    // async fetchABook() {
+    //   const bookId = this.$route.params.id;
+    //   try {
+    //     const response = await fetch(
+    //       `http://localhost:3000/api/v1/books/${bookId}`
+    //     );
+    //     const data = await response.json();
+    //     this.book = data;
+    //     this.loading = false
+    //   } catch (error) {}
+    // },
+  },
+  computed: {
+    ...mapState(useBookStore, ["selectedBook"]),
   },
 };
 </script>
