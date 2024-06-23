@@ -35,9 +35,7 @@
         <!-- Submit Button -->
         <div class="row justify-content-center">
           <div class="col-md-6 col-8 mb-3">
-            <button type="submit" class="btn btn-primary w-100">
-              Login
-            </button>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
           </div>
         </div>
       </form>
@@ -46,6 +44,8 @@
 </template>
 
 <script>
+import { useAuthStore } from "@/stores/authStore.js";
+import { mapActions } from "pinia";
 export default {
   name: "LoginView",
   data() {
@@ -57,10 +57,16 @@ export default {
     };
   },
   methods: {
-    submitForm() {
-      console.log('Login formData :>> ', this.formData);
-    }
-  }
+    ...mapActions(useAuthStore, ["login"]),
+    async submitForm() {
+      try {
+        await this.login(this.formData);
+        this.$router.push("/dashboard");
+      } catch (error) {
+        console.log("Logged in failed!", error);
+      }
+    },
+  },
 };
 </script>
 
