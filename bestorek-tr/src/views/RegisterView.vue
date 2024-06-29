@@ -128,6 +128,7 @@
 <script>
 import { useAuthStore } from "@/stores/authStore.js";
 import { mapActions } from "pinia";
+import { useToast } from "vue-toastification";
 export default {
   name: "RegisterView",
   data() {
@@ -149,7 +150,19 @@ export default {
     async submitForm() {
       try {
         await this.register(this.formData);
-        this.$router.push("/login");
+        const toast = useToast();
+
+        toast.success("You will be redirected to the login page.", {
+          position: "top-right",
+          timeout: 3500,
+          closeButton: "button",
+          icon: true,
+          rtl: false
+        });
+
+        setTimeout(() => {
+          this.$router.push("/login");
+        }, 3000);
       } catch (data) {
         const { error } = data;
 
@@ -190,25 +203,5 @@ export default {
 </script>
 
 <style scoped>
-.form-control {
-  border-radius: 25px;
-  height: 48px;
-}
 
-.form-control:focus {
-  box-shadow: none;
-}
-
-.btn-primary {
-  border-radius: 25px;
-  height: 48px;
-  background-color: var(--secondary-color);
-  border: 1px solid var(--secondary-color);
-}
-
-.btn-primary:hover {
-  background-color: #ffff;
-  color: var(--secondary-color);
-  transition: all 0.3s ease;
-}
 </style>
