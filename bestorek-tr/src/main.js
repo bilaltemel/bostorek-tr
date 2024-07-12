@@ -10,7 +10,6 @@ import { useAuthStore } from "@/stores/authStore.js";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
-
 /* import the fontawesome core */
 import { library } from "@fortawesome/fontawesome-svg-core";
 
@@ -20,8 +19,10 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 /* import specific icons */
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
+import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faArrowLeft, faThumbsUp);
+library.add(faArrowLeft, faThumbsUp, faPenToSquare, faTrash);
 
 const pinia = createPinia();
 

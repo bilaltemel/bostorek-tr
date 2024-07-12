@@ -33,6 +33,9 @@ export const useAuthStore = defineStore("authStore", {
         );
         this.user = response.data.user;
         localStorage.setItem("user", JSON.stringify(response.data.user));
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${response.data.token}`;
       } catch (error) {
         throw error.response.data;
       }
@@ -41,6 +44,6 @@ export const useAuthStore = defineStore("authStore", {
       this.user = null;
       localStorage.removeItem("user");
       location.reload();
-    }
+    },
   },
 });
