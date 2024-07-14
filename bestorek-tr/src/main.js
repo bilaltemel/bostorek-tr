@@ -6,6 +6,7 @@ import router from "@/router/index.js";
 import { createPinia } from "pinia";
 import { useBookStore } from "@/stores/bookStore.js";
 import { useAuthStore } from "@/stores/authStore.js";
+import axios from "axios";
 
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
@@ -21,8 +22,8 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-
-library.add(faArrowLeft, faThumbsUp, faPenToSquare, faTrash);
+import { faAdd } from "@fortawesome/free-solid-svg-icons";
+library.add(faArrowLeft, faThumbsUp, faPenToSquare, faTrash, faAdd);
 
 const pinia = createPinia();
 
@@ -31,6 +32,11 @@ const storedUser = localStorage.getItem("user");
 if (storedUser) {
   const userData = JSON.parse(storedUser);
   useAuthStore(pinia).user = userData;
+
+  const token = userData.token;
+  if (token) {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  }
 }
 
 const bookStore = useBookStore(pinia);

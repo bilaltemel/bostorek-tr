@@ -15,6 +15,18 @@ const getAllBooks = async (req, res) => {
   }
 };
 
+const getBooksByUploader = async (req, res) => {
+  try {
+    const uploaderId = req.user._id;
+
+    const books = await Book.find({ uploader: uploaderId });
+    res.status(200).json(books);
+  } catch (error) {
+    console.error("Error at getBooksByUploader", error);
+    return res.status(500).json({ error: "Interna Server error" });
+  }
+};
+
 const getABook = async (req, res) => {
   const { id } = req.params;
 
@@ -34,7 +46,9 @@ const getABook = async (req, res) => {
 
 const createABook = async (req, res) => {
   try {
-    const { title, author } = req.body;
+    const { title, author, description, pageNumber } = req.body;
+
+    const uploader = req.user._id;
 
     const existingBook = await Book.findOne({ title, author });
 
@@ -43,7 +57,14 @@ const createABook = async (req, res) => {
         error: "A book with same title and author already exist!",
       });
     }
-    const newBook = await Book.create(req.body);
+
+    const newBook = await Book.create({
+      title,
+      author,
+      description,
+      pageNumber,
+      uploader,
+    });
 
     return res
       .status(201)
@@ -85,7 +106,6 @@ const updateABook = async (req, res) => {
 };
 
 const deleteABook = async (req, res) => {
-  console.log('req.user :>> ', req.user);
   const { id } = req.params;
 
   if (isValidObjectId(id, res)) return;
@@ -102,4 +122,11 @@ const deleteABook = async (req, res) => {
   }
 };
 
-export { getAllBooks, createABook, getABook, updateABook, deleteABook };
+export {
+  getAllBooks,
+  createABook,
+  getABook,
+  updateABook,
+  deleteABook,
+  getBooksByUploader,
+};
