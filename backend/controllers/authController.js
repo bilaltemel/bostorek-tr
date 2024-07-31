@@ -50,9 +50,11 @@ const login = async (req, res) => {
 
     user.password = undefined;
 
+    const expirationTime = 60 * 60;
+
     //Generate Token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: process.env.JWT_EXPIRE_TIME,
+      expiresIn: expirationTime,
     });
 
     return res

@@ -23,9 +23,32 @@ import { faThumbsUp } from "@fortawesome/free-regular-svg-icons";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faAdd } from "@fortawesome/free-solid-svg-icons";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
+
 library.add(faArrowLeft, faThumbsUp, faPenToSquare, faTrash, faAdd);
 
 const pinia = createPinia();
+const authStore = useAuthStore(pinia);
+
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      toast.error("Your token has expired, forwarding login page", {
+        position: "top-right",
+        timeout: 2500,
+        closeButton: "button",
+        icon: true,
+        rtl: false,
+      });
+      setTimeout(() => {
+        authStore.logout();
+      }, 2500);
+    }
+  }
+);
 
 const storedUser = localStorage.getItem("user");
 
