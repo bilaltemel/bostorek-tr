@@ -24,38 +24,36 @@
               <th class="text-center">Delete</th>
             </tr>
           </thead>
-          <tbody>
-            <TransitionGroup name="list">
-              <tr v-for="book in userBooks" :key="book._id">
-                <td>{{ book.title }}</td>
-                <td>{{ book.author }}</td>
-                <td style="max-width: 250px">
-                  {{ book.description }}
-                </td>
-                <td>{{ book.pageNumber }}</td>
-                <td class="text-center">
-                  <font-awesome-icon
-                    :icon="['far', 'pen-to-square']"
-                    class="text-warning"
-                    style="cursor: pointer"
-                  />
-                </td>
-                <td class="text-center">
-                  <font-awesome-icon
-                    :icon="['fas', 'trash']"
-                    class="text-danger"
-                    style="cursor: pointer"
-                    @click="deleteBook(book._id)"
-                  />
-                </td>
-              </tr>
-            </TransitionGroup>
-          </tbody>
+          <TransitionGroup name="list" tag="tbody">
+            <tr v-for="book in userBooks" :key="book._id">
+              <td>{{ book.title }}</td>
+              <td>{{ book.author }}</td>
+              <td style="max-width: 250px">
+                {{ book.description }}
+              </td>
+              <td>{{ book.pageNumber }}</td>
+              <td class="text-center">
+                <font-awesome-icon
+                  :icon="['far', 'pen-to-square']"
+                  class="text-warning"
+                  style="cursor: pointer"
+                />
+              </td>
+              <td class="text-center">
+                <font-awesome-icon
+                  :icon="['fas', 'trash']"
+                  class="text-danger"
+                  style="cursor: pointer"
+                  @click="deleteBook(book._id, book.title)"
+                />
+              </td>
+            </tr>
+          </TransitionGroup>
         </table>
       </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Add Book Modal -->
     <div class="modal fade" ref="addEditModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -174,7 +172,22 @@ export default {
     },
   },
   methods: {
-    ...mapActions(useBookStore, ["addNewBook", "fetchBooksByUploader"]),
+    ...mapActions(useBookStore, [
+      "addNewBook",
+      "fetchBooksByUploader",
+      "deleteTheBook",
+    ]),
+    showToast(message, options) {
+      const toast = useToast();
+
+      toast(message, {
+        position: "top-right",
+        closeButton: "button",
+        icon: true,
+        rtl: false,
+        ...options,
+      });
+    },
     async addBook() {
       try {
         await this.addNewBook(this.newBook);
@@ -188,13 +201,39 @@ export default {
 
         await this.fetchBooksByUploader();
 
-        const toast = useToast();
-        toast.success("New book added successfully!", {
-          position: "top-right",
-          timeout: 1000,
-          closeButton: "button",
-          icon: true,
-          rtl: false,
+        // const toast = useToast();
+        // toast.success("New book added successfully!", {
+        //   position: "top-right",
+        //   timeout: 1000,
+        //   closeButton: "button",
+        //   icon: true,
+        //   rtl: false,
+        // });
+
+        this.showToast("New book added successfully!", {type: "success", timeout: 1500})
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async deleteBook(bookId, bookTitle) {
+      try {
+        await this.deleteTheBook(bookId);
+
+        await this.fetchBooksByUploader();
+
+        // const toast = useToast();
+
+        // toast.warning(`${bookTitle} deleted successfully`, {
+        //   position: "top-right",
+        //   timeout: 2500,
+        //   closeButton: "button",
+        //   icon: true,
+        //   rtl: false,
+        // });
+
+        this.showToast(`${bookTitle} deleted successfully`, {
+          type: "success",
+          timeout: 2000,
         });
       } catch (error) {
         console.error(error);
@@ -213,14 +252,21 @@ export default {
   margin-right: 20px;
   min-width: 120px;
 }
+.list-move, /* apply transition to moving elements */
 .list-enter-active,
 .list-leave-active {
-  transition: all 1s ease;
+  transition: all 1.5s ease;
 }
 
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
   transform: translateX(300px);
+}
+
+/* ensure leaving items are taken out of layout flow so that moving
+   animations can be calculated correctly. */
+.list-leave-active {
+  position: absolute;
 }
 </style>
