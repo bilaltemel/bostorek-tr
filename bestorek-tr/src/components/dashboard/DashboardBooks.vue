@@ -3,7 +3,7 @@
     <!-- Button -->
     <div class="row mb-3">
       <div class="col text-end">
-        <button type="button" class="btn btn-primary" @click="modal.show()">
+        <button type="button" class="btn btn-primary" @click="openAddModal()">
           <font-awesome-icon :icon="['fas', 'plus']" />
           Add Book
         </button>
@@ -37,6 +37,7 @@
                   :icon="['far', 'pen-to-square']"
                   class="text-warning"
                   style="cursor: pointer"
+                  @click="openEditModal(book)"
                 />
               </td>
               <td class="text-center">
@@ -58,7 +59,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="addModalLabel">Add Book</h5>
+            <h5 class="modal-title" id="addModalLabel">{{ modalTitle }}</h5>
             <button
               type="button"
               @click="modal.hide()"
@@ -77,7 +78,7 @@
                 class="form-control"
                 id="title"
                 name="title"
-                v-model="newBook.title"
+                v-model="bookData.title"
                 required
               />
             </div>
@@ -91,7 +92,7 @@
                 class="form-control"
                 id="author"
                 name="author"
-                v-model="newBook.author"
+                v-model="bookData.author"
                 required
               />
             </div>
@@ -106,7 +107,7 @@
                 name="description"
                 cols="30"
                 rows="10"
-                v-model="newBook.description"
+                v-model="bookData.description"
               />
             </div>
             <div class="col mb-3">
@@ -119,7 +120,7 @@
                 class="form-control"
                 id="numOfPages"
                 name="numOfPages"
-                v-model="newBook.pageNumber"
+                v-model="bookData.pageNumber"
                 required
               />
             </div>
@@ -131,7 +132,7 @@
               >
                 Close
               </button>
-              <button @click="addBook" type="button" class="btn btn-primary">
+              <button @click="saveBook()" type="button" class="btn btn-primary">
                 Save
               </button>
             </div>
@@ -152,11 +153,13 @@ export default {
   data() {
     return {
       modal: null,
-      newBook: {
+      modalTitle: "",
+      bookData: {
         title: "",
         author: "",
         description: "",
         pageNumber: null,
+        editedBookId: null,
       },
     };
   },
@@ -176,7 +179,36 @@ export default {
       "addNewBook",
       "fetchBooksByUploader",
       "deleteTheBook",
+      "editTheBook",
     ]),
+    saveBook() {
+      if (this.modalTitle === "Add Book") {
+        this.addBook();
+      } else if (this.modalTitle === "Edit Book") {
+        this.editBook();
+      }
+    },
+    openAddModal() {
+      this.modalTitle = "Add Book";
+      this.bookData = {
+        title: "",
+        author: "",
+        description: "",
+        pageNumber: null,
+      };
+      this.modal.show();
+    },
+    openEditModal(existingBook) {
+      this.modalTitle = "Edit Book";
+      this.editedBookId = existingBook._id;
+      this.bookData = {
+        title: existingBook.title,
+        author: existingBook.author,
+        description: existingBook.description,
+        pageNumber: existingBook.pageNumber,
+      };
+      this.modal.show();
+    },
     showToast(message, options) {
       const toast = useToast();
 
@@ -190,9 +222,9 @@ export default {
     },
     async addBook() {
       try {
-        await this.addNewBook(this.newBook);
+        await this.addNewBook(this.bookData);
         this.modal.hide();
-        this.newBook = {
+        this.bookData = {
           title: "",
           author: "",
           description: "",
@@ -201,16 +233,27 @@ export default {
 
         await this.fetchBooksByUploader();
 
-        // const toast = useToast();
-        // toast.success("New book added successfully!", {
-        //   position: "top-right",
-        //   timeout: 1000,
-        //   closeButton: "button",
-        //   icon: true,
-        //   rtl: false,
-        // });
+        this.showToast("New book added successfully!", {
+          type: "success",
+          timeout: 1500,
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async editBook() {
+      try {
+        await this.editTheBook(this.editedBookId, this.bookData);
 
-        this.showToast("New book added successfully!", {type: "success", timeout: 1500})
+        await this.fetchBooksByUploader();
+
+        this.modal.hide();
+
+        this.showToast(`The book edited successfully`, {
+          type: "success",
+          timeout: 2000,
+        });
+
       } catch (error) {
         console.error(error);
       }
@@ -220,16 +263,6 @@ export default {
         await this.deleteTheBook(bookId);
 
         await this.fetchBooksByUploader();
-
-        // const toast = useToast();
-
-        // toast.warning(`${bookTitle} deleted successfully`, {
-        //   position: "top-right",
-        //   timeout: 2500,
-        //   closeButton: "button",
-        //   icon: true,
-        //   rtl: false,
-        // });
 
         this.showToast(`${bookTitle} deleted successfully`, {
           type: "success",
