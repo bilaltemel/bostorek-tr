@@ -40,7 +40,6 @@ export default {
       return Math.ceil(this.books.length / this.itemsPerPage);
     },
     paginatedBooks() {
-      // console.log("books:", this.books);
       const startIndex = (this.currentPage - 1) * this.itemsPerPage; // current Page bulunduğu sayfa
       const endIndex = startIndex + this.itemsPerPage;
       return this.books.slice(startIndex, endIndex);

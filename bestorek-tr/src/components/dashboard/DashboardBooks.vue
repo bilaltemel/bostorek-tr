@@ -25,7 +25,7 @@
             </tr>
           </thead>
           <TransitionGroup name="list" tag="tbody">
-            <tr v-for="book in userBooks" :key="book._id">
+            <tr v-for="book in paginatedBooks" :key="book._id">
               <td>{{ book.title }}</td>
               <td>{{ book.author }}</td>
               <td style="max-width: 250px">
@@ -54,6 +54,13 @@
       </div>
     </div>
 
+    <div class="row">
+      <PaginationWidget
+        :currentPage="currentPage"
+        :totalPages="totalPages"
+        @page-changed="updatePage"
+      />
+    </div>
     <!-- Add Book Modal -->
     <div class="modal fade" ref="addEditModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog">
@@ -106,7 +113,7 @@
                 id="description"
                 name="description"
                 cols="30"
-                rows="10"
+                rows="4"
                 v-model="bookData.description"
               />
             </div>
@@ -144,12 +151,16 @@
 </template>
 
 <script>
+import PaginationWidget from "../widgets/PaginationWidget.vue";
 import { useBookStore } from "@/stores/bookStore.js";
 import { mapActions, mapState } from "pinia";
 import { Modal } from "bootstrap";
 import { useToast } from "vue-toastification";
 export default {
   name: "DashboardBooks",
+  components: {
+    PaginationWidget,
+  },
   data() {
     return {
       modal: null,
@@ -161,6 +172,8 @@ export default {
         pageNumber: null,
         editedBookId: null,
       },
+      currentPage: 1,
+      itemsPerPage: 5,
     };
   },
   created() {
@@ -168,6 +181,14 @@ export default {
   },
   computed: {
     ...mapState(useBookStore, ["userUploadedBooks"]),
+    totalPages() {
+      return Math.ceil(this.userBooks.length / this.itemsPerPage);
+    },
+    paginatedBooks() {
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage; // current Page bulunduğu sayfa
+      const endIndex = startIndex + this.itemsPerPage;
+      return this.userBooks.slice(startIndex, endIndex);
+    },
     userBooks() {
       return this.userUploadedBooks
         .slice()
@@ -181,6 +202,9 @@ export default {
       "deleteTheBook",
       "editTheBook",
     ]),
+    updatePage(page) {
+      this.currentPage = page;
+    },
     saveBook() {
       if (this.modalTitle === "Add Book") {
         this.addBook();
@@ -223,6 +247,7 @@ export default {
     async addBook() {
       try {
         await this.addNewBook(this.bookData);
+        this.currentPage = 1;
         this.modal.hide();
         this.bookData = {
           title: "",
@@ -253,7 +278,6 @@ export default {
           type: "success",
           timeout: 2000,
         });
-
       } catch (error) {
         console.error(error);
       }
