@@ -18,13 +18,28 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 /* import specific icons */
-import { faThumbsUp, faArrowLeft, faTrash, faAdd } from "@fortawesome/free-solid-svg-icons";
-import { faThumbsUp as farThumbsUp, faPenToSquare } from "@fortawesome/free-regular-svg-icons";
+import {
+  faThumbsUp,
+  faArrowLeft,
+  faTrash,
+  faAdd,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  faThumbsUp as farThumbsUp,
+  faPenToSquare,
+} from "@fortawesome/free-regular-svg-icons";
 import { useToast } from "vue-toastification";
 
 const toast = useToast();
 
-library.add(faArrowLeft, faThumbsUp, faPenToSquare, faTrash, faAdd, farThumbsUp);
+library.add(
+  faArrowLeft,
+  faThumbsUp,
+  faPenToSquare,
+  faTrash,
+  faAdd,
+  farThumbsUp
+);
 
 const pinia = createPinia();
 const authStore = useAuthStore(pinia);
@@ -51,7 +66,9 @@ const storedUser = localStorage.getItem("user");
 
 if (storedUser) {
   const userData = JSON.parse(storedUser);
-  useAuthStore(pinia).user = userData;
+  useAuthStore(pinia).user = userData.user;
+
+  console.log("useAuthStore(pinia).user", useAuthStore(pinia).user);
 
   const token = userData.token;
   if (token) {
