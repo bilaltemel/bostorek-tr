@@ -36,7 +36,7 @@ export const useCommentStore = defineStore("commentStore", {
         const response = await axios.get(
           `http://localhost:3000/api/v1/comments/user/${userId}`
         );
-        console.log(response.data);
+        // console.log(response.data);
 
         this.commentsByUser = response.data.comments;
       } catch (error) {

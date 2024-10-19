@@ -129,20 +129,8 @@ export default {
       }
     },
     async editBookComment() {
-      console.log("editBookComment tetiklendi");
       try {
-        console.log(
-          "Veriler gönderiliyor:",
-          this.editedCommentId,
-          this.commentData
-        );
-
         await this.editTheComment(this.editedCommentId, this.commentData);
-
-        // console.log("Yorum başarıyla güncellendi", res.data.commentData);
-
-        // console.log("Mevcut yorumlar:", this.commentsByUser);
-        
 
         await this.fetchCommentByUser(this.user._id);
 

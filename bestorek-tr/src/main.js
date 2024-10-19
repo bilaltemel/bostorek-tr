@@ -68,7 +68,7 @@ if (storedUser) {
   const userData = JSON.parse(storedUser);
   useAuthStore(pinia).user = userData.user;
 
-  console.log("useAuthStore(pinia).user", useAuthStore(pinia).user);
+  // console.log("useAuthStore(pinia).user", useAuthStore(pinia).user);
 
   const token = userData.token;
   if (token) {
