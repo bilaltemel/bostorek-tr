@@ -198,7 +198,6 @@ export default {
     this.selectBook();
     // this.fetchCommentsForBook(this.$route.params.id);
     this.fetchCommentsForBook(this.$route.params.id);
-    this.fetchRatingsForBook(this.$route.params.id);
   },
   methods: {
     ...mapActions(useCommentStore, ["addNewComment", "fetchCommentsForBook"]),
@@ -246,6 +245,7 @@ export default {
     selectBook() {
       const bookId = this.$route.params.id;
       this.book = this.selectedBook(bookId);
+      console.log('this.book :>> ', this.book);
       this.loading = false;
     },
   },
@@ -256,18 +256,18 @@ export default {
     ...mapState(useRatingStore, ["ratingsForBook"]),
 
     averageRating() {
-      if (this.ratingsForBook.length > 0) {
-        const totalRating = this.ratingsForBook.reduce(
+      if (this.book.ratings.length > 0) {
+        const totalRating = this.book.ratings.reduce(
           (sum, rating) => sum + rating.rate,
           0
         );
-        return (totalRating / this.ratingsForBook.length).toFixed(1);
+        return (totalRating / this.book.ratings.length).toFixed(1);
       } else {
         return 0;
       }
     },
     ratingCount() {
-      return this.ratingsForBook ? this.ratingsForBook.length : 0;
+      return this.book.ratings ? this.book.ratings.length : 0;
     },
 
     isUserAlreadyRated() {
@@ -275,12 +275,12 @@ export default {
         return false;
       }
       // console.log('rating.ratedBy_id :>> ', rating.ratedBy_id);
-      return this.ratingsForBook.some(
+      return this.book.ratings.some(
         (rating) => rating.ratedBy._id === this.user._id
       );
     },
     userRating() {
-      const userRatingObj = this.ratingsForBook.find(
+      const userRatingObj = this.book.ratings.find(
         (rating) => rating.ratedBy._id === this.user._id
       );
 

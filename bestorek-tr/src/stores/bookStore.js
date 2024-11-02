@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import { useRatingStore } from "./ratingStore.js";
 
 export const useBookStore = defineStore("bookStore", {
   state: () => ({
@@ -11,6 +12,26 @@ export const useBookStore = defineStore("bookStore", {
     selectedBook: (state) => {
       return (id) => state.books.find((book) => book._id === id);
     },
+    latest4Books: (state) => {
+      return state.books
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 4);
+    },
+    rated4Books: (state) => {
+      const sortedBooks = state.books.sort((a, b) => {
+        const averageRatingA =
+          a.ratings.reduce((sum, rating) => sum + rating.rate, 0) /
+          (a.ratings.length || 1);
+
+        const averageRatingB =
+          b.ratings.reduce((sum, rating) => sum + rating.rate, 0) /
+          (b.ratings.length || 1);
+
+        return averageRatingB - averageRatingA;
+      });
+
+      return sortedBooks.slice(0, 4);
+    },
   },
   actions: {
     async fetchBooks() {
@@ -18,11 +39,28 @@ export const useBookStore = defineStore("bookStore", {
       try {
         const response = await axios.get("http://localhost:3000/api/v1/books");
         this.books = response.data;
+
+        await this.fetchRatingsForBooks();
       } catch (error) {
         console.error("Error at fetching books", error);
       } finally {
         this.isLoading = false;
       }
+    },
+    async fetchRatingsForBooks() {
+      const ratingStore = useRatingStore();
+
+      await Promise.all(
+        this.books.map(async (book) => {
+          try {
+            await ratingStore.fetchRatingsForBook(book._id);
+
+            book.ratings = ratingStore.ratingsForBook;
+          } catch (error) {
+            console.error("Error at fetchRatingsForBook", error);
+          }
+        })
+      );
     },
     async fetchBooksByUploader() {
       try {
@@ -59,7 +97,6 @@ export const useBookStore = defineStore("bookStore", {
         if (bookIndex !== -1) {
           this.books.splice(bookIndex, 1, updatedBookData);
         }
-
       } catch (error) {
         throw error.response.data;
       }
