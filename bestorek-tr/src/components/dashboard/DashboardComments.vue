@@ -150,8 +150,6 @@ export default {
   },
   created() {
     this.fetchCommentByUser(this.user._id).then(() => {
-      console.log("Yorumlar : ", this.commentsByUser);
-      
     });
   },
   mounted() {

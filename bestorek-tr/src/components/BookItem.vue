@@ -21,7 +21,7 @@
           style="background-color: var(--primary-color)"
           class="py-1 px-2 text-white badge mb-0"
         >
-          {{ book.updatedAt }}
+         Upload Date : {{ formattedUpdatedAt }}
         </p>
       </div>
     </div>
@@ -59,6 +59,14 @@ export default {
       }
 
       return this.book.description;
+    },
+    formattedUpdatedAt() {
+      const date = new Date(this.book.updatedAt);
+      return new Intl.DateTimeFormat("en-US", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }).format(date);
     },
   },
 };

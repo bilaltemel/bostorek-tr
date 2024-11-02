@@ -8,14 +8,22 @@ export const useCommentStore = defineStore("commentStore", {
     commentsByUser: [],
   }),
   actions: {
+    async fetchComments() {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/v1/comments"
+        );
+        console.log("response.data.comments", response.data.comments);
+        this.comments = response.data.comments;
+      } catch (error) {
+        console.error("Error at fetching comments", error);
+      }
+    },
     async addNewComment(newComment) {
       try {
-        const response = await axios.post(
-          "http://localhost:3000/api/v1/comments",
-          newComment
-        );
+        await axios.post("http://localhost:3000/api/v1/comments", newComment);
 
-        this.comments.push(response.data.comment);
+        await this.fetchComments();
       } catch (error) {
         throw error.response.data;
       }

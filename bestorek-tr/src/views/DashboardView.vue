@@ -96,7 +96,7 @@ export default {
   name: "DashboardView",
   data() {
     return {
-      activeTab: "comments",
+      activeTab: "general",
     };
   },
   components: {
