@@ -13,7 +13,7 @@
         <tbody>
           <tr v-for="comment in commentsByUser" :key="comment._id">
             <td>{{ comment.content }}</td>
-            <td>{{ comment.book.title }}</td>
+            <td>{{ comment.book ? comment.book.title : 'There in no title in your book' }}</td>
             <td class="text-center">
               <font-awesome-icon
                 :icon="['far', 'pen-to-square']"

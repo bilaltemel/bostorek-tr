@@ -13,7 +13,7 @@ export const useCommentStore = defineStore("commentStore", {
         const response = await axios.get(
           "http://localhost:3000/api/v1/comments"
         );
-        console.log("response.data.comments", response.data.comments);
+        // console.log("response.data.comments", response.data.comments);
         this.comments = response.data.comments;
       } catch (error) {
         console.error("Error at fetching comments", error);
@@ -44,7 +44,7 @@ export const useCommentStore = defineStore("commentStore", {
         const response = await axios.get(
           `http://localhost:3000/api/v1/comments/user/${userId}`
         );
-        // console.log(response.data);
+        console.log(response.data);
 
         this.commentsByUser = response.data.comments;
       } catch (error) {
@@ -73,6 +73,46 @@ export const useCommentStore = defineStore("commentStore", {
         this.comments.splice(commentIndex, 1, updatedCommentData);
       } catch (error) {
         throw error.response.data;
+      }
+    },
+    async upvoteComment(commentId) {
+      console.log("commentId", commentId);
+      
+      try {
+        const response = await axios.post(
+          `http://localhost:3000/api/v1/comments/${commentId}/upvote`
+        );
+
+        const upvotedComment = response.data.comment;
+
+        const commentIndex = this.comments.findIndex(
+          (comment) => comment._id === upvotedComment._id
+        );
+
+        if (commentIndex !== -1) {
+          this.comments[commentIndex] = upvotedComment;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async downvoteComment(commentId) {
+      try {
+        const response = await axios.post(
+          `http://localhost:3000/api/v1/comments/${commentId}/downvote`
+        );
+
+        const updatedComment = response.data.comment;
+
+        const commentIndex = this.comments.findIndex(
+          (comment) => comment._id === upvotedComment._id
+        );
+
+        if (commentIndex !== -1) {
+          this.comments[commentIndex] = upvotedComment;
+        }
+      } catch (error) {
+        console.log(error);
       }
     },
   },

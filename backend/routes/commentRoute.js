@@ -17,4 +17,12 @@ router
   .route("/:id")
   .put(authMiddleware.authenticateUser, commentController.updateAComment);
 
+router
+  .route("/:id/upvote")
+  .post(authMiddleware.authenticateUser, commentController.upvoteComment);
+
+router
+  .route("/:id/downvote")
+  .post(authMiddleware.authenticateUser, commentController.downvoteComment);
+
 export default router;

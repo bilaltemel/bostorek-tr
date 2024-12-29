@@ -30,7 +30,7 @@
             </div>
             <div class="row border-bottom pb-2">
               <div class="col-lg-6"><strong>Rating</strong></div>
-              <div class="col-lg-6">{{averageRating}} - ({{ratingCount}} rates)</div>
+              <div class="col-lg-6">{{ averageRating }} - ({{ ratingCount }} rates)</div>
             </div>
             <div class="row border-bottom pb-2">
               <div class="col-lg-6"><strong>Upload Date</strong></div>
@@ -100,24 +100,19 @@
             </form>
           </div>
           <router-link v-else to="/login">
-            <p style="color: var(--secondary-color)">
-              Log in to post a comment.
-            </p>
+            <p style="color: var(--secondary-color)">Log in to post a comment.</p>
           </router-link>
         </div>
       </div>
     </div>
     <hr />
+    {{ commentsForBook }}
     <div class="row my-3">
       <div class="col-md-12">
         <div class="box">
           <h3 style="color: var(--primary-color)">Comments</h3>
           <div>
-            <div
-              class="card mb-4"
-              v-for="comment in commentsForBook"
-              :key="comment._id"
-            >
+            <div class="card mb-4" v-for="comment in commentsForBook" :key="comment._id">
               <div class="card-body">
                 <p>
                   {{ comment.content }}
@@ -129,13 +124,64 @@
                       {{ comment.postedBy.username }}
                     </p>
                   </div>
-                  <div
-                    class="d-flex flex-row align-items-center"
-                    style="gap: 10px"
-                  >
-                    <p class="small text-muted mb-0">Upvote?</p>
+                  <div class="d-flex flex-row align-items-center" style="gap: 10px">
+                    <div
+                      class="d-flex flex-row align-items-center"
+                      style="gap: 10px"
+                      v-if="!user"
+                    >
+                      <p class="small mb-0">Login for upvote!</p>
+                      <font-awesome-icon
+                        :icon="['fas', 'thumbs-up']"
+                        style="color: var(--secondary-color)"
+                      />
+                    </div>
+                    <div
+                      class="d-flex flex-row align-items-center"
+                      style="gap: 10px; cursor: pointer"
+                      v-else-if="
+                        !comment.upvotes.includes(user._id) &&
+                        comment.postedBy._id !== user._id
+                      "
+                      @click="upvote(comment._id)"
+                    >
+                      <p class="small mb-0">Upvote?</p>
+                      <font-awesome-icon :icon="['far', 'thumbs-up']" />
+                    </div>
+                    <div
+                      class="d-flex flex-row align-items-center"
+                      style="gap: 10px; cursor: pointer"
+                      v-else-if="
+                        comment.upvotes.includes(user._id) &&
+                        comment.postedBy._id !== user._id
+                      "
+                      @click="downvote(comment._id)"
+                    >
+                      <p class="small mb-0">Upvoted</p>
+                      <font-awesome-icon
+                        :icon="['fas', 'thumbs-up']"
+                        style="color: var(--secondary-color)"
+                      />
+                    </div>
+
+                    <div
+                      v-else
+                      class="d-flex flex-row align-items-center"
+                      style="gap: 10px"
+                    >
+                      <p class="small mb-0">You can't upvote for your comment</p>
+                      <font-awesome-icon
+                        :icon="['fas', 'thumbs-up']"
+                        style="color: var(--secondary-color)"
+                      />
+                    </div>
+
+                    <p class="small text-muted mb-0">
+                      {{ comment.upvotes.length }}
+                    </p>
+                    <!-- <p class="small text-muted mb-0">Upvote?</p>
                     <font-awesome-icon :icon="['far', 'thumbs-up']" />
-                    <p class="small text-muted mb-0">3</p>
+                    <p class="small text-muted mb-0">3</p> -->
                   </div>
                 </div>
               </div>
@@ -198,10 +244,34 @@ export default {
     this.selectBook();
     // this.fetchCommentsForBook(this.$route.params.id);
     this.fetchCommentsForBook(this.$route.params.id);
+    this.fetchRatingsForBook(this.$route.params.id);
   },
   methods: {
-    ...mapActions(useCommentStore, ["addNewComment", "fetchCommentsForBook"]),
+    ...mapActions(useCommentStore, [
+      "addNewComment",
+      "fetchCommentsForBook",
+      "upvoteComment",
+      "downvoteComment",
+    ]),
     ...mapActions(useRatingStore, ["addNewRate", "fetchRatingsForBook"]),
+    async upvote(commentId) {
+      try {
+        await this.upvoteComment(commentId);
+
+        await this.fetchCommentsForBook(this.$route.params.id);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async downvote(commentId) {
+      try {
+        await this.downvoteComment(commentId);
+
+        await this.fetchCommentsForBook(this.$route.params.id);
+      } catch (error) {
+        console.log(error);
+      }
+    },
     async addComment() {
       try {
         console.log("this.user  :>> ", this.user);
@@ -245,7 +315,7 @@ export default {
     selectBook() {
       const bookId = this.$route.params.id;
       this.book = this.selectedBook(bookId);
-      console.log('this.book :>> ', this.book);
+      console.log("this.book :>> ", this.book);
       this.loading = false;
     },
   },
@@ -275,9 +345,7 @@ export default {
         return false;
       }
       // console.log('rating.ratedBy_id :>> ', rating.ratedBy_id);
-      return this.book.ratings.some(
-        (rating) => rating.ratedBy._id === this.user._id
-      );
+      return this.book.ratings.some((rating) => rating.ratedBy._id === this.user._id);
     },
     userRating() {
       const userRatingObj = this.book.ratings.find(

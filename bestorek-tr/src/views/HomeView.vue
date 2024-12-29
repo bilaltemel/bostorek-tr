@@ -208,7 +208,6 @@ export default {
             title: correspondingBook.title,
           };
         }
-
         return comment;
       });
     },
