@@ -68,11 +68,9 @@
               class="text-danger small"
               >Please provide a valid email!</span
             >
-            <span
-              v-if="existingEmail === formData.email"
-              class="text-danger small"
-              >{{ `${existingEmail} is already exist!` }}</span
-            >
+            <span v-if="existingEmail === formData.email" class="text-danger small">{{
+              `${existingEmail} is already exist!`
+            }}</span>
           </div>
         </div>
 
@@ -108,11 +106,7 @@
         <!-- Submit Button -->
         <div class="row justify-content-center">
           <div class="col-md-6 col-8 mb-3">
-            <button
-              :disabled="!isFormValid"
-              type="submit"
-              class="btn btn-primary w-100"
-            >
+            <button :disabled="!isFormValid" type="submit" class="btn btn-primary w-100">
               Register
             </button>
             <span v-if="!isFormValid" class="text-danger small"
@@ -125,83 +119,66 @@
   </section>
 </template>
 
-<script>
+<script setup>
+import { reactive, ref, computed } from "vue";
 import { useAuthStore } from "@/stores/authStore.js";
 import { mapActions } from "pinia";
+import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
-export default {
-  name: "RegisterView",
-  data() {
-    return {
-      formData: {
-        username: "",
-        email: "",
-        password: "",
-      },
-      showUsernameWarningMessage: false,
-      showEmailWarningMessage: false,
-      showPasswordWarningMessage: false,
-      existingEmail: null,
-      showGenericWarningMessage: false,
-    };
-  },
-  methods: {
-    ...mapActions(useAuthStore, ["register"]),
-    async submitForm() {
-      try {
-        await this.register(this.formData);
-        const toast = useToast();
 
-        toast.success("You will be redirected to the login page.", {
-          position: "top-right",
-          timeout: 3500,
-          closeButton: "button",
-          icon: true,
-          rtl: false
-        });
+const formData = reactive({
+  username: ref(""),
+  email: ref(""),
+  password: ref(""),
+});
 
-        setTimeout(() => {
-          this.$router.push("/login");
-        }, 3000);
-      } catch (data) {
-        const { error } = data;
+const showUsernameWarningMessage = ref(false);
+const showEmailWarningMessage = ref(false);
+const showPasswordWarningMessage = ref(false);
+const existingEmail = ref(null);
+const showGenericWarningMessage = ref(false);
 
-        if (error === "The Email is already exist!") {
-          this.existingEmail = this.formData.email;
-        } else {
-          this.showGenericWarningMessage = true;
-          this.formData = {
-            username: "",
-            email: "",
-            password: "",
-          };
-        }
-      }
-    },
-  },
-  computed: {
-    isFormValid() {
-      return this.isUserNameValid && this.isEmailValid && this.isPasswordValid;
-    },
-    isUserNameValid() {
-      return (
-        this.formData.username.length >= 5 &&
-        this.formData.username.length <= 20
-      );
-    },
-    isEmailValid() {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.formData.email);
-    },
-    isPasswordValid() {
-      return (
-        this.formData.password.length >= 4 &&
-        this.formData.password.length <= 10
-      );
-    },
-  },
+const authStore = useAuthStore();
+const router = useRouter();
+
+const submitForm = async () => {
+  try {
+    await authStore.register(formData);
+    const toast = useToast();
+
+    toast.success("You will be redirected to the login page.", {
+      position: "top-right",
+      timeout: 3500,
+      closeButton: "button",
+      icon: true,
+      rtl: false,
+    });
+
+    setTimeout(() => {
+      router.push("/login");
+    }, 3000);
+  } catch (data) {
+    const { error } = data;
+
+    if (error === "The Email is already exist!") {
+      existingEmail.value = formData.email;
+    } else {
+      showGenericWarningMessage.value = true;
+      formData.username = "";
+      formData.email = "";
+      formData.password = "";
+    }
+  }
 };
+
+const isFormValid = computed(
+  () => isUserNameValid.value && isEmailValid.value && isPasswordValid.value
+);
+const isUserNameValid = computed(
+  () => formData.username.length >= 5 && formData.username.length <= 20
+);
+const isEmailValid = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email));
+const isPasswordValid = computed(
+  () => formData.password.length >= 4 && formData.password.length <= 10
+);
 </script>
-
-<style scoped>
-
-</style>
