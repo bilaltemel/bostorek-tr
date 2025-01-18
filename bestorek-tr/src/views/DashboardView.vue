@@ -2,7 +2,7 @@
   <section style="min-height: calc(100vh - 130px); overflow: hidden">
     <div class="container py-5">
       <ul class="nav nav-tabs" id="dashboardTab" role="tabList">
-        <li class="nav-item" role="presentation" @click="activeTab = 'general'">
+        <li class="nav-item" role="presentation" @click="setActiveTab('general')">
           <button
             class="nav-link"
             :class="{ active: activeTab === 'general' }"
@@ -17,7 +17,7 @@
             General
           </button>
         </li>
-        <li class="nav-item" role="presentation" @click="activeTab = 'books'">
+        <li class="nav-item" role="presentation" @click="setActiveTab('books')">
           <button
             class="nav-link"
             :class="{ active: activeTab === 'books' }"
@@ -32,11 +32,7 @@
             Books
           </button>
         </li>
-        <li
-          class="nav-item"
-          role="presentation"
-          @click="activeTab = 'comments'"
-        >
+        <li class="nav-item" role="presentation" @click="setActiveTab('comments')">
           <button
             class="nav-link"
             :class="{ active: activeTab === 'comments' }"
@@ -88,24 +84,42 @@
   </section>
 </template>
 
-<script>
+<script setup>
 import DashboardGeneral from "@/components/dashboard/DashboardGeneral.vue";
 import DashboardBooks from "@/components/dashboard/DashboardBooks.vue";
 import DashboardComments from "@/components/dashboard/DashboardComments.vue";
+import { ref } from "vue";
+
+const activeTab = ref("general");
+
+const setActiveTab = (tab) => {
+  activeTab.value = tab;
+};
+</script>
+
+<!-- <script>
+import DashboardGeneral from "@/components/dashboard/DashboardGeneral.vue";
+import DashboardBooks from "@/components/dashboard/DashboardBooks.vue";
+import DashboardComments from "@/components/dashboard/DashboardComments.vue";
+import { ref } from "vue";
 export default {
   name: "DashboardView",
-  data() {
+  setup() {
+    const activeTab = ref("general");
+    return { activeTab };
+  },
+  /*   data() {
     return {
       activeTab: "general",
     };
-  },
+  }, */
   components: {
     DashboardGeneral,
     DashboardBooks,
     DashboardComments,
   },
 };
-</script>
+</script> -->
 
 <style scoped>
 .nav-link {
