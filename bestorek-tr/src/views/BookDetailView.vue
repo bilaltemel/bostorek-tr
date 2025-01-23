@@ -34,7 +34,7 @@
             </div>
             <div class="row border-bottom pb-2">
               <div class="col-lg-6"><strong>Upload Date</strong></div>
-              <div class="col-lg-6">{{ book.updatedAt }}</div>
+              <div class="col-lg-6">{{ formattedUpdatedAt }}</div>
             </div>
           </div>
         </div>
@@ -106,7 +106,6 @@
       </div>
     </div>
     <hr />
-    {{ commentsForBook }}
     <div class="row my-3">
       <div class="col-md-12">
         <div class="box">
@@ -274,7 +273,7 @@ export default {
     },
     async addComment() {
       try {
-        console.log("this.user  :>> ", this.user);
+        //console.log("this.user  :>> ", this.user);
         const bookId = this.$route.params.id;
         const content = this.commentContent;
         const userId = this.user._id;
@@ -315,7 +314,6 @@ export default {
     selectBook() {
       const bookId = this.$route.params.id;
       this.book = this.selectedBook(bookId);
-      console.log("this.book :>> ", this.book);
       this.loading = false;
     },
   },
@@ -324,6 +322,19 @@ export default {
     ...mapState(useAuthStore, ["user", "isLoggedIn"]),
     ...mapState(useCommentStore, ["commentsForBook"]),
     ...mapState(useRatingStore, ["ratingsForBook"]),
+
+    formattedUpdatedAt() {
+      if (!this.book.updatedAt) return "";
+      const date = new Date(this.book.updatedAt);
+      return new Intl.DateTimeFormat("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      }).format(date);
+    },
 
     averageRating() {
       if (this.book.ratings.length > 0) {

@@ -13,7 +13,9 @@
         <tbody>
           <tr v-for="comment in commentsByUser" :key="comment._id">
             <td>{{ comment.content }}</td>
-            <td>{{ comment.book ? comment.book.title : 'There in no title in your book' }}</td>
+            <td>
+              {{ comment.book ? comment.book.title : "There in no title in your book" }}
+            </td>
             <td class="text-center">
               <font-awesome-icon
                 :icon="['far', 'pen-to-square']"
@@ -102,8 +104,6 @@ export default {
   methods: {
     ...mapActions(useCommentStore, ["fetchCommentByUser", "editTheComment"]),
     openEditModal(existingBookComment) {
-      console.log(existingBookComment);
-
       this.modalTitle = "Edit Book Comment";
       this.editedCommentId = existingBookComment._id;
 
@@ -149,8 +149,7 @@ export default {
     ...mapState(useAuthStore, ["user"]),
   },
   created() {
-    this.fetchCommentByUser(this.user._id).then(() => {
-    });
+    this.fetchCommentByUser(this.user._id).then(() => {});
   },
   mounted() {
     this.modal = new Modal(this.$refs.addEditModal);

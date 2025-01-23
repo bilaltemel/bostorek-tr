@@ -2,11 +2,7 @@
   <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-end">
       <li class="page-item" :class="{ disabled: currentPage === 1 }">
-        <a
-          class="page-link"
-          @click="goToPage(currentPage - 1)"
-          aria-label="Previous"
-        >
+        <a class="page-link" @click="goToPage(currentPage - 1)" aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
@@ -19,11 +15,7 @@
         <a class="page-link" @click="goToPage(page)">{{ page }}</a>
       </li>
       <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-        <a
-          class="page-link"
-          @click="goToPage(currentPage + 1)"
-          aria-label="Next"
-        >
+        <a class="page-link" @click="goToPage(currentPage + 1)" aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
         </a>
       </li>
@@ -31,26 +23,21 @@
   </nav>
 </template>
 
-<script>
-export default {
-  name: "PaginationWidget",
-  emits: ["page-changed"],
-  props: {
-    currentPage: {
-      type: Number,
-      required: true,
-    },
-    totalPages: {
-      type: Number,
-      required: true,
-    },
+<script setup>
+const props = defineProps({
+  currentPage: {
+    type: Number,
+    required: true,
   },
-  methods: {
-    goToPage(page) {
-      this.$emit("page-changed", page);
-    },
+  totalPages: {
+    type: Number,
+    required: true,
   },
+});
+
+const emit = defineEmits(["page-changed"]);
+
+const goToPage = (page) => {
+  emit("page-changed", page);
 };
 </script>
-
-<style scoped></style>

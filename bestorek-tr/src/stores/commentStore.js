@@ -44,7 +44,6 @@ export const useCommentStore = defineStore("commentStore", {
         const response = await axios.get(
           `http://localhost:3000/api/v1/comments/user/${userId}`
         );
-        console.log(response.data);
 
         this.commentsByUser = response.data.comments;
       } catch (error) {
@@ -59,12 +58,10 @@ export const useCommentStore = defineStore("commentStore", {
         );
 
         const updatedCommentData = response.data.comment;
-        console.log("updatedCommentData :>> ", updatedCommentData);
 
         const commentIndex = this.comments.findIndex(
           (comment) => comment._id === this.commentId
         );
-        console.log("commentIndex :>> ", commentIndex);
 
         if (commentIndex !== -1) {
           this.commentsByUser[commentIndex] = updatedCommentData;
@@ -76,7 +73,6 @@ export const useCommentStore = defineStore("commentStore", {
       }
     },
     async upvoteComment(commentId) {
-      console.log("commentId", commentId);
       
       try {
         const response = await axios.post(

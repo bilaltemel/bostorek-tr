@@ -75,9 +75,9 @@ export default {
     formattedUpdatedAt() {
       const date = new Date(this.book.updatedAt);
       return new Intl.DateTimeFormat("en-US", {
-        day: "2-digit",
         month: "2-digit",
-        year: "numeric",
+        day: "2-digit",
+        year: "numeric"
       }).format(date);
     },
   },
