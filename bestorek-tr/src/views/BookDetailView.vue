@@ -281,7 +281,7 @@ const selectBook = () => {
 };
 
 const averageRating = computed(() => {
-  if (ratingStore.fetchRatingsForBook.length > 0) {
+  if (ratingStore.ratingsForBook.length > 0) {
     const totalRating = ratingStore.ratingsForBook.reduce(
       (sum, rating) => sum + rating.rate,
       0
