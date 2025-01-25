@@ -96,31 +96,6 @@ const setActiveTab = (tab) => {
   activeTab.value = tab;
 };
 </script>
-
-<!-- <script>
-import DashboardGeneral from "@/components/dashboard/DashboardGeneral.vue";
-import DashboardBooks from "@/components/dashboard/DashboardBooks.vue";
-import DashboardComments from "@/components/dashboard/DashboardComments.vue";
-import { ref } from "vue";
-export default {
-  name: "DashboardView",
-  setup() {
-    const activeTab = ref("general");
-    return { activeTab };
-  },
-  /*   data() {
-    return {
-      activeTab: "general",
-    };
-  }, */
-  components: {
-    DashboardGeneral,
-    DashboardBooks,
-    DashboardComments,
-  },
-};
-</script> -->
-
 <style scoped>
 .nav-link {
   color: var(--secondary-color);

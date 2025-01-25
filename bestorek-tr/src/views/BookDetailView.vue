@@ -178,40 +178,10 @@
                     <p class="small text-muted mb-0">
                       {{ comment.upvotes.length }}
                     </p>
-                    <!-- <p class="small text-muted mb-0">Upvote?</p>
-                    <font-awesome-icon :icon="['far', 'thumbs-up']" />
-                    <p class="small text-muted mb-0">3</p> -->
                   </div>
                 </div>
               </div>
             </div>
-            <!-- <div class="card mb-4">
-              <div class="card-body">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-
-                <div class="d-flex justify-content-between">
-                  <div class="d-flex flex-row align-items-center">
-                    <p class="small mb-0 ms-2">Username</p>
-                  </div>
-                  <div
-                    class="d-flex flex-row align-items-center"
-                    style="gap: 10px"
-                  >
-                    <p class="small mb-0">Upvoted</p>
-                    <font-awesome-icon
-                      :icon="['fas', 'thumbs-up']"
-                      style="color: var(--secondary-color)"
-                    />
-                    <p class="small text-muted mb-0">4</p>
-                  </div>
-                </div>
-              </div>
-            </div> -->
           </div>
         </div>
       </div>
@@ -219,26 +189,152 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import SectionHeader from "@/components/SectionHeader.vue";
 import { useBookStore } from "@/stores/bookStore.js";
 import { useAuthStore } from "@/stores/authStore.js";
 import { useCommentStore } from "@/stores/commentStore.js";
 import { useRatingStore } from "@/stores/ratingStore.js";
-import { mapState, mapActions } from "pinia";
-export default {
-  name: "BookDetailView",
-  components: {
-    SectionHeader,
-  },
-  data() {
-    return {
-      book: null,
-      loading: true,
-      commentContent: "",
-      userRate: null,
-    };
-  },
+import { ref, computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
+
+const book = ref(null);
+const loading = ref(true);
+const commentContent = ref("");
+const userRate = ref(null);
+
+const bookStore = useBookStore();
+const authStore = useAuthStore();
+const commentStore = useCommentStore();
+const ratingStore = useRatingStore();
+const route = useRoute();
+const router = useRouter();
+
+const upvote = async (commentId) => {
+  try {
+    await commentStore.upvoteComment(commentId);
+
+    await commentStore.fetchCommentsForBook(route.params.id);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const downvote = async (commentId) => {
+  try {
+    await commentStore.downvoteComment(commentId);
+
+    await commentStore.fetchCommentsForBook(route.params.id);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const addComment = async () => {
+  try {
+    const bookId = route.params.id;
+    const content = commentContent.value;
+    const userId = authStore.user._id;
+
+    await commentStore.addNewComment({
+      bookId,
+      content,
+      userId,
+    });
+
+    commentContent.value = "";
+
+    await commentStore.fetchCommentsForBook(route.params.id);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const addRate = () => {
+  try {
+    const bookId = route.params.id;
+    const rate = userRate.value;
+    const userId = authStore.user._id;
+
+    ratingStore.addNewRate({
+      bookId,
+      rate,
+      userId,
+    });
+
+    userRate.value = null;
+
+    ratingStore.fetchRatingsForBook(route.params.id);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const goToBackBooks = () => {
+  router.push({ name: "books" });
+};
+
+const selectBook = () => {
+  const bookId = route.params.id;
+  book.value = bookStore.selectedBook(bookId);
+  loading.value = false;
+};
+
+const averageRating = computed(() => {
+  if (ratingStore.fetchRatingsForBook.length > 0) {
+    const totalRating = ratingStore.ratingsForBook.reduce(
+      (sum, rating) => sum + rating.rate,
+      0
+    );
+    return (totalRating / ratingStore.ratingsForBook.length).toFixed(1);
+  } else {
+    return 0;
+  }
+});
+
+const ratingCount = computed(() => {
+  return ratingStore.ratingsForBook ? ratingStore.ratingsForBook.length : 0;
+});
+
+const isUserAlreadyRated = computed(() => {
+  if (!authStore.user) {
+    return false;
+  }
+  return ratingStore.ratingsForBook.some(
+    (rating) => rating.ratedBy._id === authStore.user._id
+  );
+});
+
+const userRating = computed(() => {
+  const userRatingObj = ratingStore.ratingsForBook.find(
+    (rating) => rating.ratedBy._id === authStore.user._id
+  );
+
+  return userRatingObj ? userRatingObj.rate : null;
+});
+
+const formattedUpdatedAt = computed(() => {
+  if (!book.value.updatedAt) return "";
+  const date = new Date(book.value.updatedAt);
+  return new Intl.DateTimeFormat("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  }).format(date);
+});
+
+const user = computed(() => authStore.user);
+const isLoggedIn = computed(() => authStore.isLoggedIn);
+const commentsForBook = computed(() => commentStore.commentsForBook);
+
+selectBook();
+commentStore.fetchCommentsForBook(route.params.id);
+ratingStore.fetchRatingsForBook(route.params.id);
+</script>
+<!-- <script>
   created() {
     this.selectBook();
     // this.fetchCommentsForBook(this.$route.params.id);
@@ -253,69 +349,6 @@ export default {
       "downvoteComment",
     ]),
     ...mapActions(useRatingStore, ["addNewRate", "fetchRatingsForBook"]),
-    async upvote(commentId) {
-      try {
-        await this.upvoteComment(commentId);
-
-        await this.fetchCommentsForBook(this.$route.params.id);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async downvote(commentId) {
-      try {
-        await this.downvoteComment(commentId);
-
-        await this.fetchCommentsForBook(this.$route.params.id);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async addComment() {
-      try {
-        //console.log("this.user  :>> ", this.user);
-        const bookId = this.$route.params.id;
-        const content = this.commentContent;
-        const userId = this.user._id;
-
-        await this.addNewComment({
-          bookId,
-          content,
-          userId,
-        });
-
-        this.commentContent = "";
-
-        await this.fetchCommentsForBook(this.$route.params.id);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async addRate() {
-      try {
-        const bookId = this.$route.params.id;
-        const rate = this.userRate;
-        const userId = this.user._id;
-
-        await this.addNewRate({
-          bookId,
-          rate,
-          userId,
-        });
-
-        this.userRate = null;
-
-        await this.fetchRatingsForBook(this.$route.params.id);
-      } catch (error) {}
-    },
-    goToBackBooks() {
-      this.$router.push({ name: "books" });
-    },
-    selectBook() {
-      const bookId = this.$route.params.id;
-      this.book = this.selectedBook(bookId);
-      this.loading = false;
-    },
   },
   computed: {
     ...mapState(useBookStore, ["selectedBook"]),
@@ -335,39 +368,9 @@ export default {
         hour12: true,
       }).format(date);
     },
-
-    averageRating() {
-      if (this.book.ratings.length > 0) {
-        const totalRating = this.book.ratings.reduce(
-          (sum, rating) => sum + rating.rate,
-          0
-        );
-        return (totalRating / this.book.ratings.length).toFixed(1);
-      } else {
-        return 0;
-      }
-    },
-    ratingCount() {
-      return this.book.ratings ? this.book.ratings.length : 0;
-    },
-
-    isUserAlreadyRated() {
-      if (!this.user) {
-        return false;
-      }
-      // console.log('rating.ratedBy_id :>> ', rating.ratedBy_id);
-      return this.book.ratings.some((rating) => rating.ratedBy._id === this.user._id);
-    },
-    userRating() {
-      const userRatingObj = this.book.ratings.find(
-        (rating) => rating.ratedBy._id === this.user._id
-      );
-
-      return userRatingObj ? userRatingObj.rate : null;
-    },
   },
 };
-</script>
+</script> -->
 
 <style scoped>
 .image-box {
