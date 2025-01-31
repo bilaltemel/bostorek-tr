@@ -6,7 +6,7 @@ export const useUserStore = defineStore("userStore", {
     async updateUserDetails(updatedUserData) {
       try {
         const response = await axios.put(
-          "http://localhost:3000/api/v1/user/updateUser",
+          "https://bostorek-tr-production.up.railway.app/api/v1/user/updateUser",
           updatedUserData
         );
         return response.data;

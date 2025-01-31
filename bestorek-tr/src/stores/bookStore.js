@@ -37,7 +37,7 @@ export const useBookStore = defineStore("bookStore", {
     async fetchBooks() {
       this.isLoading = true;
       try {
-        const response = await axios.get("http://localhost:3000/api/v1/books");
+        const response = await axios.get("https://bostorek-tr-production.up.railway.app/api/v1/books");
         this.books = response.data;
 
         await this.fetchRatingsForBooks();
@@ -65,7 +65,7 @@ export const useBookStore = defineStore("bookStore", {
     async fetchBooksByUploader() {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/v1/books/uploader"
+          "https://bostorek-tr-production.up.railway.app/api/v1/books/uploader"
         );
         this.userUploadedBooks = response.data;
       } catch (error) {
@@ -76,7 +76,7 @@ export const useBookStore = defineStore("bookStore", {
       this.isLoading = true;
       try {
         const response = await axios.post(
-          "http://localhost:3000/api/v1/books",
+          "https://bostorek-tr-production.up.railway.app/api/v1/books",
           newBook
         );
         this.books.push(response.data.book);
@@ -87,7 +87,7 @@ export const useBookStore = defineStore("bookStore", {
     async editTheBook(bookId, bookData) {
       try {
         const response = await axios.put(
-          `http://localhost:3000/api/v1/books/${bookId}`,
+          `https://bostorek-tr-production.up.railway.app/api/v1/books/${bookId}`,
           bookData
         );
 
@@ -103,7 +103,7 @@ export const useBookStore = defineStore("bookStore", {
     },
     async deleteTheBook(bookId) {
       try {
-        await axios.delete(`http://localhost:3000/api/v1/books/${bookId}`);
+        await axios.delete(`https://bostorek-tr-production.up.railway.app/api/v1/books/${bookId}`);
         this.books = this.books.filter((book) => book._id !== bookId);
       } catch (error) {
         throw error.response.data;

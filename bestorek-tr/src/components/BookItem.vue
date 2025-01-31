@@ -29,7 +29,7 @@
       :class="ratingBadgeClass"
       class="position-absolute top-0 start-100 translate-middle p-2 text-light rounded-circle border border-2 border-light custom-center"
     >
-      {{averageRating }}
+      {{ averageRating }}
     </span>
   </div>
 </template>
@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     averageRating() {
-      if (this.book.ratings.length > 0) {
+      if (this.book?.ratings?.length > 0) {
         const totalRating = this.book.ratings.reduce(
           (sum, rating) => sum + rating.rate,
           0
@@ -53,11 +53,11 @@ export default {
 
         return (totalRating / this.book.ratings.length).toFixed(1);
       } else {
-        return '-';
+        return "-";
       }
     },
     ratingBadgeClass() {
-      if (this.averageRating > 7 || this.averageRating === '-') {
+      if (this.averageRating > 7 || this.averageRating === "-") {
         return "bg-success";
       } else if (this.averageRating > 4) {
         return "bg-warning";
@@ -77,7 +77,7 @@ export default {
       return new Intl.DateTimeFormat("en-US", {
         month: "2-digit",
         day: "2-digit",
-        year: "numeric"
+        year: "numeric",
       }).format(date);
     },
   },

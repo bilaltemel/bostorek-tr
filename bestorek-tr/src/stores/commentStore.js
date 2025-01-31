@@ -11,7 +11,7 @@ export const useCommentStore = defineStore("commentStore", {
     async fetchComments() {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/v1/comments"
+          "https://bostorek-tr-production.up.railway.app/api/v1/comments"
         );
         // console.log("response.data.comments", response.data.comments);
         this.comments = response.data.comments;
@@ -21,7 +21,7 @@ export const useCommentStore = defineStore("commentStore", {
     },
     async addNewComment(newComment) {
       try {
-        await axios.post("http://localhost:3000/api/v1/comments", newComment);
+        await axios.post("https://bostorek-tr-production.up.railway.app/api/v1/comments", newComment);
 
         await this.fetchComments();
       } catch (error) {
@@ -31,7 +31,7 @@ export const useCommentStore = defineStore("commentStore", {
     async fetchCommentsForBook(bookId) {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/v1/comments/book/${bookId}`
+          `https://bostorek-tr-production.up.railway.app/v1/comments/book/${bookId}`
         );
 
         this.commentsForBook = response.data.comments;
@@ -42,7 +42,7 @@ export const useCommentStore = defineStore("commentStore", {
     async fetchCommentByUser(userId) {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/v1/comments/user/${userId}`
+          `https://bostorek-tr-production.up.railway.app/v1/comments/user/${userId}`
         );
 
         this.commentsByUser = response.data.comments;
@@ -53,7 +53,7 @@ export const useCommentStore = defineStore("commentStore", {
     async editTheComment(commentId, commentData) {
       try {
         const response = await axios.put(
-          `http://localhost:3000/api/v1/comments/${commentId}`,
+          `https://bostorek-tr-production.up.railway.app/v1/comments/${commentId}`,
           commentData
         );
 
@@ -76,7 +76,7 @@ export const useCommentStore = defineStore("commentStore", {
       
       try {
         const response = await axios.post(
-          `http://localhost:3000/api/v1/comments/${commentId}/upvote`
+          `https://bostorek-tr-production.up.railway.app/v1/comments/${commentId}/upvote`
         );
 
         const upvotedComment = response.data.comment;
@@ -95,7 +95,7 @@ export const useCommentStore = defineStore("commentStore", {
     async downvoteComment(commentId) {
       try {
         const response = await axios.post(
-          `http://localhost:3000/api/v1/comments/${commentId}/downvote`
+          `https://bostorek-tr-production.up.railway.app/v1/comments/${commentId}/downvote`
         );
 
         const updatedComment = response.data.comment;

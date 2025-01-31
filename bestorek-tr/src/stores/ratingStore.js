@@ -11,7 +11,7 @@ export const useRatingStore = defineStore("ratingStore", {
     async addNewRate(newRate) {
       try {
         const response = await axios.post(
-          "http://localhost:3000/api/v1/ratings",
+          "https://bostorek-tr-production.up.railway.app/api/v1/ratings",
           newRate
         );
 
@@ -24,7 +24,7 @@ export const useRatingStore = defineStore("ratingStore", {
       const bookStore = useBookStore();
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/v1/ratings/book/${bookId}`
+          `https://bostorek-tr-production.up.railway.app/api/v1/ratings/book/${bookId}`
         )
 
         this.ratingsForBook = response.data.ratings
